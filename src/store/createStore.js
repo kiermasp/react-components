@@ -3,17 +3,19 @@ import thunk from 'redux-thunk'
 import { browserHistory } from 'react-router'
 import makeRootReducer from './reducers'
 import { updateLocation } from './location'
+import { persistStore, autoRehydrate} from 'redux-persist'
 
 export default (initialState = {}) => {
   // ======================================================
   // Middleware Configuration
   // ======================================================
+ // const middleware = [thunk, autoRehydrate]
   const middleware = [thunk]
 
   // ======================================================
   // Store Enhancers
   // ======================================================
-  const enhancers = []
+  const enhancers = [autoRehydrate()]
   if (__DEV__) {
     const devToolsExtension = window.devToolsExtension
     if (typeof devToolsExtension === 'function') {
@@ -32,6 +34,9 @@ export default (initialState = {}) => {
       ...enhancers
     )
   )
+
+  persistStore(store)
+
   store.asyncReducers = {}
 
   // To unsubscribe, invoke `store.unsubscribeHistory()` anytime
