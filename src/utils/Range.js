@@ -1,29 +1,13 @@
-export default
-class Range {
+export default class Range {
 
-  private _value: 0,
-  private _minimum: 0,
-  private _maximum: 100,
-  private _stepSize: 0.5,
-  private _snapInterval: 1.0
-
-  static defaultProps = {
-    value: 0,
-    minimum: 0,
-    maximum: 100,
-    stepSize: 0.5,
-    snapInterval: 1.0
-  }
+  _value = 0;
+  _minimum = 0;
+  _maximum = 100;
+  _stepSize = 1;
+  _snapInterval = 1;
 
   constructor(props) {
-    super(props);
-    this.state = {
-      value: props._value,
-      minimum: props._minimum,
-      maximum: props._maximum,
-      stepSize: props._stepSize,
-      snapInterval: props._snapInterval
-    }
+    Object.assign(this, props)
   }
 
   nearestValidValue(value, interval) {
@@ -31,11 +15,11 @@ class Range {
       value = 0;
 
     if (interval == 0)
-      return Math.max(this.props._minimum, Math.min(this.props._maximum, value));
+      return Math.max(this._minimum, Math.min(this._maximum, value));
 
-    var maxValue:Number = this.props._maximum - this.props._minimum;
-    var scale:Number = 1;
-    var offset:Number = this.props._minimum; // the offset from 0.
+    var maxValue = this._maximum - this._minimum;
+    var scale = 1;
+    var offset = this._minimum; // the offset from 0.
 
     // If interval isn't an integer, there's a possibility that the floating point
     // approximation of value or value/interval will be slightly larger or smaller
@@ -48,7 +32,7 @@ class Range {
 
     if (interval != Math.round(interval)) {
       // calculate scale and compute new scaled values.
-      const parts:Array = (new String(1 + interval)).split(".");
+      const parts = (new String(1 + interval)).split(".");
       scale = Math.pow(10, parts[1].length);
       maxValue *= scale;
       offset *= scale;
@@ -59,56 +43,67 @@ class Range {
       value -= offset;
     }
 
-    var lower:Number = Math.max(0, Math.floor(value / interval) * interval);
-    var upper:Number = Math.min(maxValue, Math.floor((value + interval) / interval) * interval);
-    var validValue:Number = ((value - lower) >= ((upper - lower) / 2)) ? upper : lower;
+    var lower = Math.max(0, Math.floor(value / interval) * interval);
+    var upper = Math.min(maxValue, Math.floor((value + interval) / interval) * interval);
+    var validValue = ((value - lower) >= ((upper - lower) / 2)) ? upper : lower;
 
     return (validValue + offset) / scale;
   }
 
   setValue(value) {
-    if (!isNaN(this.props._maximum) && !isNaN(this.props._minimum) && (this.props._maximum > this.props._minimum))
-      return Math.min(this.props._maximum, Math.max(this.props._minimum, value));
+    if (!isNaN(this._maximum) && !isNaN(this._minimum) && (this._maximum > this._minimum))
+      return Math.min(this._maximum, Math.max(this._minimum, value));
     else
       return value;
   }
 
   nearestValidSize(size) {
-    var interval:Number = this.props._snapInterval;
+    var interval = this._snapInterval;
     if (interval == 0)
       return size;
 
-    var validSize:Number = Math.round(size / interval) * interval
+    var validSize = Math.round(size / interval) * interval
     return (Math.abs(validSize) < interval) ? interval : validSize;
   }
 
-  public get value():public
 
-  set value(value):void {
-    _value = value;
+  get snapInterval() {
+    return this._snapInterval;
   }
 
-  public get minimum():public
-
-  set minimum(value):void {
-    _minimum = value;
+  set snapInterval(value) {
+    this._snapInterval = value;
   }
 
-  public get maximum():public
-
-  set maximum(value):void {
-    _maximum = value;
+  get stepSize() {
+    return this._stepSize;
   }
 
-  public get stepSize():public
-
-  set stepSize(value):void {
-    _stepSize = value;
+  set stepSize(value) {
+    this._stepSize = value;
   }
 
-  public get snapInterval():public
+  get maximum() {
+    return this._maximum;
+  }
 
-  set snapInterval(value):void {
-    _snapInterval = value;
+  set maximum(value) {
+    this._maximum = value;
+  }
+
+  get minimum() {
+    return this._minimum;
+  }
+
+  set minimum(value) {
+    this._minimum = value;
+  }
+
+  get value() {
+    return this._value;
+  }
+
+  set value(value) {
+    this._value = value;
   }
 }
